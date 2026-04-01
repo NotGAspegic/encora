@@ -1,4 +1,4 @@
-// types/index.ts
+// types/index.ts — replace the full file
 
 export interface Profile {
   id: string
@@ -14,12 +14,10 @@ export interface Conversation {
   participant_a: string
   participant_b: string
   created_at: string
-  // joined fields
+  // Joined fields — populated by queries that JOIN profiles
   other_user?: Profile
-  last_message?: {
-    ciphertext: string
-    created_at: string
-  }
+  last_message?: Pick<Message, 'ciphertext' | 'iv' | 'created_at'>
+  unread_count?: number
 }
 
 export interface Message {
@@ -30,7 +28,7 @@ export interface Message {
   iv: string
   read_at: string | null
   created_at: string
-  // client-side only — never persisted
+  // Client-side only — never persisted, never sent to server
   plaintext?: string
 }
 
@@ -39,6 +37,8 @@ export interface TypingIndicator {
   conversation_id: string
   updated_at: string
 }
+
+export type MessageInsert = Pick<Message, 'conversation_id' | 'sender_id' | 'ciphertext' | 'iv'>
 
 export type AuthError = {
   message: string
