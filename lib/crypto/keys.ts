@@ -155,3 +155,13 @@ export async function importPublicKey(publicKeyJwkString: string): Promise<Crypt
     []     // no usages — ECDH public keys have no direct operations
   )
 }
+
+/**
+ * Permanently removes the key pair from this device.
+ * Only call this when the user explicitly wants to deregister the device.
+ * After this, old messages CANNOT be decrypted until keys are rotated.
+ */
+export async function forgetDevice(): Promise<void> {
+  await clearKeyPair()
+  console.warn('[Encora Crypto] Device keys cleared. Old messages are no longer decryptable.')
+}

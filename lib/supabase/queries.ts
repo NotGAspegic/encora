@@ -151,14 +151,28 @@ export async function markMessagesAsRead(
 ): Promise<void> {
   const supabase = createClient()
 
-  const { error } = await supabase
+  const { data, error } = await supabase
     .from('messages')
     .update({ read_at: new Date().toISOString() })
     .eq('conversation_id', conversationId)
     .neq('sender_id', currentUserId)
     .is('read_at', null)
+    .select('id, read_at')
 
   if (error) {
     console.error('[Supabase] markMessagesAsRead error:', error.message)
+    return
   }
+
+  if (!data || data.length === 0) return
+
+  // Broadcast read receipts so the sender sees ✓✓ instantly
+  await supabase.channel(`conversation:${conversationId}`).send({
+    type: 'broadcast',
+    event: 'messages_read',
+    payload: {
+      message_ids: data.map((m: { id: string }) => m.id),
+      read_at: data[0].read_at,
+    },
+  })
 }

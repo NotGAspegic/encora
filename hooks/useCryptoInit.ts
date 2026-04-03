@@ -44,13 +44,12 @@ export function useCryptoInit(userId: string | null) {
       setState({ status: 'generating', error: null })
 
       try {
-        // Generate key pair (or retrieve existing one)
+        // This is idempotent — returns existing key if already in IndexedDB
         const publicKeyJwk = await generateAndStoreKeyPair()
 
         if (cancelled) return
         setState({ status: 'uploading', error: null })
 
-        // Check if DB already has this user's public key
         const supabase = createClient()
         const { data: profile } = await supabase
           .from('profiles')
@@ -60,7 +59,8 @@ export function useCryptoInit(userId: string | null) {
 
         if (cancelled) return
 
-        // Upload if missing or different (e.g. after key rotation)
+        // Re-upload if Supabase has a different key than what's in IndexedDB
+        // This handles the case where keys were cleared server-side or rotated
         if (!profile?.public_key || profile.public_key !== publicKeyJwk) {
           const { error } = await supabase
             .from('profiles')
@@ -68,6 +68,8 @@ export function useCryptoInit(userId: string | null) {
             .eq('id', userId)
 
           if (error) throw new Error(`Failed to upload public key: ${error.message}`)
+          
+          console.info('[Encora Crypto] Public key re-synced to Supabase.')
         }
 
         if (cancelled) return

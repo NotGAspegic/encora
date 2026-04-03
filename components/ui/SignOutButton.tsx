@@ -8,7 +8,7 @@ import { signOut } from '@/app/(auth)/actions'
 export function SignOutButton() {
   async function handleSignOut() {
     // Clear crypto material from browser before the server redirect
-    await clearKeyPair()
+    //await clearKeyPair()
     clearSharedKeyCache()
     await signOut()
   }
