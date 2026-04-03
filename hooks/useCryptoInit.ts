@@ -25,7 +25,6 @@ export interface CryptoInitState {
  * 2. If not, generate a new ECDH P-256 key pair
  * 3. Upload the public key JWK to profiles.public_key in Supabase
  * 4. If a key pair already exists but the DB row is missing the public key, re-upload
- *
  * This hook is safe to run on every app load — it's idempotent.
  * It will not overwrite an existing key pair.
  */
