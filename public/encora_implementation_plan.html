@@ -1,0 +1,104 @@
+
+<div style="padding:1rem 0">
+<div style="display:flex;flex-direction:column;gap:10px">
+
+<div style="border:0.5px solid var(--color-border-primary);border-radius:var(--border-radius-lg);overflow:hidden">
+  <div style="background:var(--color-background-secondary);padding:10px 16px;display:flex;align-items:center;gap:12px;border-bottom:0.5px solid var(--color-border-primary)">
+    <span style="background:#CECBF6;color:#3C3489;border-radius:20px;padding:2px 10px;font-size:11px;font-weight:500">Day 1</span>
+    <span style="font-weight:500;color:var(--color-text-primary)">Project foundation + auth</span>
+    <span style="margin-left:auto;font-size:11px;color:var(--color-text-secondary)">Commit: feat: init encora with supabase auth</span>
+  </div>
+  <div style="padding:10px 16px;font-size:13px;color:var(--color-text-secondary);display:flex;flex-direction:column;gap:4px">
+    <span>— <code style="font-size:12px;background:var(--color-background-tertiary);padding:1px 5px;border-radius:4px">npx create-next-app encora --typescript --tailwind --app</code></span>
+    <span>— Install: <code style="font-size:12px;background:var(--color-background-tertiary);padding:1px 5px;border-radius:4px">@supabase/supabase-js @supabase/ssr zustand</code></span>
+    <span>— Supabase project setup, enable Auth (email), create <code style="font-size:12px;background:var(--color-background-tertiary);padding:1px 5px;border-radius:4px">profiles</code> table with trigger</span>
+    <span>— Login / Signup pages, middleware auth guard, session handling</span>
+  </div>
+</div>
+
+<div style="border:0.5px solid var(--color-border-primary);border-radius:var(--border-radius-lg);overflow:hidden">
+  <div style="background:var(--color-background-secondary);padding:10px 16px;display:flex;align-items:center;gap:12px;border-bottom:0.5px solid var(--color-border-primary)">
+    <span style="background:#CECBF6;color:#3C3489;border-radius:20px;padding:2px 10px;font-size:11px;font-weight:500">Day 2</span>
+    <span style="font-weight:500;color:var(--color-text-primary)">Crypto layer — key generation + encryption</span>
+    <span style="margin-left:auto;font-size:11px;color:var(--color-text-secondary)">Commit: feat: e2e encryption with Web Crypto</span>
+  </div>
+  <div style="padding:10px 16px;font-size:13px;color:var(--color-text-secondary);display:flex;flex-direction:column;gap:4px">
+    <span>— ECDH P-256 key pair generation on first login</span>
+    <span>— Store private key in IndexedDB, upload public key to <code style="font-size:12px;background:var(--color-background-tertiary);padding:1px 5px;border-radius:4px">profiles.public_key</code></span>
+    <span>— HKDF key derivation from ECDH shared secret</span>
+    <span>— AES-GCM encrypt/decrypt helpers + unit tests in <code style="font-size:12px;background:var(--color-background-tertiary);padding:1px 5px;border-radius:4px">lib/crypto/</code></span>
+  </div>
+</div>
+
+<div style="border:0.5px solid var(--color-border-primary);border-radius:var(--border-radius-lg);overflow:hidden">
+  <div style="background:var(--color-background-secondary);padding:10px 16px;display:flex;align-items:center;gap:12px;border-bottom:0.5px solid var(--color-border-primary)">
+    <span style="background:#9FE1CB;color:#085041;border-radius:20px;padding:2px 10px;font-size:11px;font-weight:500">Day 3</span>
+    <span style="font-weight:500;color:var(--color-text-primary)">Database + RLS policies</span>
+    <span style="margin-left:auto;font-size:11px;color:var(--color-text-secondary)">Commit: feat: schema, RLS, migrations</span>
+  </div>
+  <div style="padding:10px 16px;font-size:13px;color:var(--color-text-secondary);display:flex;flex-direction:column;gap:4px">
+    <span>— Create all tables via SQL migrations (conversations, messages, typing_indicators)</span>
+    <span>— Write all RLS policies — verify with Supabase policy tester</span>
+    <span>— Enable Realtime on <code style="font-size:12px;background:var(--color-background-tertiary);padding:1px 5px;border-radius:4px">messages</code> and <code style="font-size:12px;background:var(--color-background-tertiary);padding:1px 5px;border-radius:4px">typing_indicators</code></span>
+    <span>— Seed test data, confirm RLS blocks cross-user access</span>
+  </div>
+</div>
+
+<div style="border:0.5px solid var(--color-border-primary);border-radius:var(--border-radius-lg);overflow:hidden">
+  <div style="background:var(--color-background-secondary);padding:10px 16px;display:flex;align-items:center;gap:12px;border-bottom:0.5px solid var(--color-border-primary)">
+    <span style="background:#9FE1CB;color:#085041;border-radius:20px;padding:2px 10px;font-size:11px;font-weight:500">Day 4</span>
+    <span style="font-weight:500;color:var(--color-text-primary)">Core messaging — send, receive, persist</span>
+    <span style="margin-left:auto;font-size:11px;color:var(--color-text-secondary)">Commit: feat: encrypted send/receive flow</span>
+  </div>
+  <div style="padding:10px 16px;font-size:13px;color:var(--color-text-secondary);display:flex;flex-direction:column;gap:4px">
+    <span>— <code style="font-size:12px;background:var(--color-background-tertiary);padding:1px 5px;border-radius:4px">useMessages</code> hook with Supabase Realtime subscription</span>
+    <span>— MessageInput encrypts before insert; MessageBubble decrypts on render</span>
+    <span>— Zustand chatStore wires everything together</span>
+    <span>— Conversation list page with last message preview</span>
+  </div>
+</div>
+
+<div style="border:0.5px solid var(--color-border-primary);border-radius:var(--border-radius-lg);overflow:hidden">
+  <div style="background:var(--color-background-secondary);padding:10px 16px;display:flex;align-items:center;gap:12px;border-bottom:0.5px solid var(--color-border-primary)">
+    <span style="background:#FAC775;color:#633806;border-radius:20px;padding:2px 10px;font-size:11px;font-weight:500">Day 5</span>
+    <span style="font-weight:500;color:var(--color-text-primary)">Presence, typing indicators, read receipts</span>
+    <span style="margin-left:auto;font-size:11px;color:var(--color-text-secondary)">Commit: feat: realtime presence + indicators</span>
+  </div>
+  <div style="padding:10px 16px;font-size:13px;color:var(--color-text-secondary);display:flex;flex-direction:column;gap:4px">
+    <span>— Supabase Presence for online/offline (channel track)</span>
+    <span>— Typing indicator via debounced upsert to <code style="font-size:12px;background:var(--color-background-tertiary);padding:1px 5px;border-radius:4px">typing_indicators</code> + cleanup</span>
+    <span>— Read receipts: update <code style="font-size:12px;background:var(--color-background-tertiary);padding:1px 5px;border-radius:4px">messages.read_at</code> on view, show ticks in UI</span>
+    <span>— <code style="font-size:12px;background:var(--color-background-tertiary);padding:1px 5px;border-radius:4px">last_seen</code> heartbeat every 30s via <code style="font-size:12px;background:var(--color-background-tertiary);padding:1px 5px;border-radius:4px">setInterval</code></span>
+  </div>
+</div>
+
+<div style="border:0.5px solid var(--color-border-primary);border-radius:var(--border-radius-lg);overflow:hidden">
+  <div style="background:var(--color-background-secondary);padding:10px 16px;display:flex;align-items:center;gap:12px;border-bottom:0.5px solid var(--color-border-primary)">
+    <span style="background:#F5C4B3;color:#712B13;border-radius:20px;padding:2px 10px;font-size:11px;font-weight:500">Day 6</span>
+    <span style="font-weight:500;color:var(--color-text-primary)">UI polish + security hardening</span>
+    <span style="margin-left:auto;font-size:11px;color:var(--color-text-secondary)">Commit: feat: security headers + UI polish</span>
+  </div>
+  <div style="padding:10px 16px;font-size:13px;color:var(--color-text-secondary);display:flex;flex-direction:column;gap:4px">
+    <span>— CSP headers in <code style="font-size:12px;background:var(--color-background-tertiary);padding:1px 5px;border-radius:4px">next.config.js</code>, X-Frame-Options, HSTS</span>
+    <span>— Input sanitization (DOMPurify for any rendered HTML)</span>
+    <span>— Rate limiting on API routes via Upstash or edge middleware</span>
+    <span>— Full mobile-responsive UI pass with TailwindCSS</span>
+  </div>
+</div>
+
+<div style="border:0.5px solid var(--color-border-primary);border-radius:var(--border-radius-lg);overflow:hidden">
+  <div style="background:var(--color-background-secondary);padding:10px 16px;display:flex;align-items:center;gap:12px;border-bottom:0.5px solid var(--color-border-primary)">
+    <span style="background:#B5D4F4;color:#0C447C;border-radius:20px;padding:2px 10px;font-size:11px;font-weight:500">Day 7</span>
+    <span style="font-weight:500;color:var(--color-text-primary)">Deploy + documentation</span>
+    <span style="margin-left:auto;font-size:11px;color:var(--color-text-secondary)">Commit: chore: deploy to Vercel + README</span>
+  </div>
+  <div style="padding:10px 16px;font-size:13px;color:var(--color-text-secondary);display:flex;flex-direction:column;gap:4px">
+    <span>— Vercel deployment with env vars, Supabase prod project</span>
+    <span>— README with architecture diagram, security design, setup steps</span>
+    <span>— Final smoke test: cross-browser, two accounts, full flow</span>
+    <span>— Optional: add Lighthouse security audit results to README</span>
+  </div>
+</div>
+
+</div>
+</div>

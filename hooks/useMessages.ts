@@ -113,17 +113,29 @@ export function useMessages(
           await markMessagesAsRead(conversationId, currentUserId)
         }
       )
-      .on(
-        'broadcast',
-        { event: 'messages_read' },
-        ({ payload }: { payload: { message_ids: string[], read_at: string } }) => {
-          if (cancelled) return
-          // Update each message that was marked as read
-          payload.message_ids.forEach((id) => {
-            updateMessage(conversationId, id, { read_at: payload.read_at })
-          })
-        }
-      )
+    .on(
+      'broadcast',
+      { event: 'messages_read' },
+      ({ payload }: { payload: { read_at: string } }) => {
+        if (cancelled) return
+        // Mark ALL our sent messages in this conversation as read
+        // This avoids the optimistic-ID mismatch problem entirely
+        useChatStore.setState((state) => {
+          const msgs = state.messages[conversationId]
+          if (!msgs) return state
+          return {
+            messages: {
+              ...state.messages,
+              [conversationId]: msgs.map((m) =>
+                m.sender_id === currentUserId && !m.read_at
+                  ? { ...m, read_at: payload.read_at }
+                  : m
+              ),
+            },
+          }
+        })
+      }
+    )
       // Fallback: postgres_changes — catches messages from other devices/sessions
       .on(
         'postgres_changes',

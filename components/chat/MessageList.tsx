@@ -3,36 +3,36 @@
 
 import { useEffect, useRef } from 'react'
 import { MessageBubble } from './MessageBubble'
+import { TypingBubble } from './TypingBubble'
+import { shouldShowSeparator, formatMessageSeparator } from '@/lib/utils/time'
 import type { Message } from '@/types'
 
 interface MessageListProps {
   messages: Message[]
   currentUserId: string
+  isOtherUserTyping: boolean
+  otherUsername: string
 }
 
-// Show timestamp if more than 5 minutes have passed since the previous message
-function shouldShowTimestamp(messages: Message[], index: number): boolean {
-  if (index === 0) return true
-  const prev = new Date(messages[index - 1].created_at).getTime()
-  const curr = new Date(messages[index].created_at).getTime()
-  return curr - prev > 5 * 60 * 1000
-}
-
-export function MessageList({ messages, currentUserId }: MessageListProps) {
+export function MessageList({
+  messages,
+  currentUserId,
+  isOtherUserTyping,
+  otherUsername,
+}: MessageListProps) {
   const bottomRef = useRef<HTMLDivElement>(null)
 
-  // Scroll to bottom on new messages
   useEffect(() => {
     bottomRef.current?.scrollIntoView({ behavior: 'smooth' })
-  }, [messages.length])
+  }, [messages.length, isOtherUserTyping])
 
-  if (messages.length === 0) {
+  if (messages.length === 0 && !isOtherUserTyping) {
     return (
       <div className="flex-1 flex items-center justify-center">
         <div className="text-center space-y-2">
           <p className="text-zinc-500 text-sm">No messages yet.</p>
           <p className="text-zinc-600 text-xs font-mono">
-            Your messages are end-to-end encrypted.
+            Messages are end-to-end encrypted.
           </p>
         </div>
       </div>
@@ -43,13 +43,34 @@ export function MessageList({ messages, currentUserId }: MessageListProps) {
     <div className="flex-1 overflow-y-auto scrollbar-hide px-5 py-4">
       <div className="flex flex-col gap-1.5">
         {messages.map((message, index) => (
-          <MessageBubble
-            key={message.id}
-            message={message}
-            isOwn={message.sender_id === currentUserId}
-            showTimestamp={shouldShowTimestamp(messages, index)}
-          />
+          <div key={message.id}>
+            {/* Time separator */}
+            {(index === 0 ||
+              shouldShowSeparator(
+                messages[index - 1].created_at,
+                message.created_at
+              )) && (
+              <div className="flex items-center gap-3 my-3">
+                <div className="flex-1 h-px bg-white/[0.06]" />
+                <span className="text-xs text-zinc-600 font-mono shrink-0">
+                  {formatMessageSeparator(message.created_at)}
+                </span>
+                <div className="flex-1 h-px bg-white/[0.06]" />
+              </div>
+            )}
+            <MessageBubble
+              message={message}
+              isOwn={message.sender_id === currentUserId}
+            />
+          </div>
         ))}
+
+        {/* Typing bubble at the bottom */}
+        {isOtherUserTyping && (
+          <div className="mt-1">
+            <TypingBubble username={otherUsername} />
+          </div>
+        )}
       </div>
       <div ref={bottomRef} />
     </div>

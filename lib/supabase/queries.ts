@@ -166,13 +166,12 @@ export async function markMessagesAsRead(
 
   if (!data || data.length === 0) return
 
-  // Broadcast read receipts so the sender sees ✓✓ instantly
+  const readAt = (data[0] as { read_at: string }).read_at
+
+  // Broadcast to sender — no IDs needed anymore
   await supabase.channel(`conversation:${conversationId}`).send({
     type: 'broadcast',
     event: 'messages_read',
-    payload: {
-      message_ids: data.map((m: { id: string }) => m.id),
-      read_at: data[0].read_at,
-    },
+    payload: { read_at: readAt },
   })
 }

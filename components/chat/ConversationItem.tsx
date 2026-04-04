@@ -2,16 +2,16 @@
 'use client'
 
 import Link from 'next/link'
-import { formatDistanceToNow } from 'date-fns'
 import { Avatar } from '@/components/ui/Avatar'
 import { StatusDot } from '@/components/ui/StatusDot'
+import { UnreadBadge } from './UnreadBadge'
+import { formatConversationTime } from '@/lib/utils/time'
 import type { Conversation } from '@/types'
 
 interface ConversationItemProps {
   conversation: Conversation
   isActive: boolean
   isOnline: boolean
-  currentConversationId?: string
 }
 
 export function ConversationItem({
@@ -22,16 +22,17 @@ export function ConversationItem({
   const other = conversation.other_user
   if (!other) return null
 
-  const timeAgo = conversation.last_message?.created_at
-    ? formatDistanceToNow(new Date(conversation.last_message.created_at), {
-        addSuffix: false,
-      })
+  const timeLabel = conversation.last_message?.created_at
+    ? formatConversationTime(conversation.last_message.created_at)
     : null
+
+  const unreadCount = conversation.unread_count ?? 0
 
   return (
     <Link
       href={`/chat/${conversation.id}`}
-      className={`flex items-center gap-3 px-3 py-3 rounded-xl transition-all duration-150
+      className={`flex items-center gap-3 px-3 py-3 rounded-xl
+                  transition-all duration-150 group
                   ${isActive
                     ? 'bg-emerald-500/10 border border-emerald-500/20'
                     : 'hover:bg-white/[0.04] border border-transparent'
@@ -46,16 +47,32 @@ export function ConversationItem({
 
       <div className="flex-1 min-w-0">
         <div className="flex items-center justify-between gap-2">
-          <span className="text-sm font-medium text-white truncate">
+          <span className={`text-sm truncate ${
+            unreadCount > 0 ? 'font-semibold text-white' : 'font-medium text-zinc-200'
+          }`}>
             @{other.username}
           </span>
-          {timeAgo && (
-            <span className="text-xs text-zinc-600 shrink-0 font-mono">{timeAgo}</span>
-          )}
+          <div className="flex items-center gap-1.5 shrink-0">
+            {timeLabel && (
+              <span className={`text-xs font-mono ${
+                unreadCount > 0 ? 'text-emerald-400/70' : 'text-zinc-600'
+              }`}>
+                {timeLabel}
+              </span>
+            )}
+          </div>
         </div>
-        <p className="text-xs text-zinc-500 truncate mt-0.5 font-mono">
-          {conversation.last_message ? '🔒 encrypted message' : 'No messages yet'}
-        </p>
+
+        <div className="flex items-center justify-between gap-2 mt-0.5">
+          <p className={`text-xs truncate font-mono ${
+            unreadCount > 0 ? 'text-zinc-400' : 'text-zinc-600'
+          }`}>
+            {conversation.last_message
+              ? `🔒 encrypted message`
+              : 'No messages yet'}
+          </p>
+          <UnreadBadge count={unreadCount} />
+        </div>
       </div>
     </Link>
   )
